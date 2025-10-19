@@ -186,7 +186,15 @@ header h1 {
 
 .album-item-name {
     font-size: 11px;
-    color: #999999;
+    color: #999;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.album-item-score {
+    font-size: 13px;
+    font-weight: 600;
+    color: #229954;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

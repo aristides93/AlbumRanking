@@ -149,6 +149,7 @@ function createManualAlbum(event) {
         artworkUrl: artworkUrl,
         isManual: true,
         color: selectedColor,
+        score: 0,
         tracks: trackLines.map((trackName, index) => ({
             id: newAlbumId + index + 1,
             number: index + 1,
@@ -236,6 +237,7 @@ async function selectAlbum(collectionId) {
                 artistName: albumData.artistName,
                 collectionName: albumData.collectionName,
                 artworkUrl: albumData.artworkUrl100.replace('100x100', '600x600'),
+                score: 0,
                 tracks: tracks.map(track => ({
                     id: track.trackId,
                     number: track.trackNumber,
@@ -263,6 +265,7 @@ function renderAlbumList() {
             <div class="album-item-info">
                 <div class="album-item-artist">${album.artistName}</div>
                 <div class="album-item-name">${album.collectionName}</div>
+                <div class="album-item-score">${album.score} / 10</div>
             </div>
         </div>
     `).join('');
@@ -370,7 +373,18 @@ function setTrackStatus(albumId, trackId, status) {
     } else {
         track.status = status;
     }
-    
+
+    const totalSongs = album.tracks.length;
+    const favoriteCount = album.tracks.filter(t => t.status === 'favorite').length;
+    const likedCount = album.tracks.filter(t => t.status === 'liked').length;
+    const dislikedCount = album.tracks.filter(t => t.status === 'disliked').length;
+
+    //si el ranking está completo, calcular score de album
+    if (totalSongs == favoriteCount+likedCount+dislikedCount) {
+        const finalScore = calcularScore(favoriteCount, likedCount, dislikedCount);
+        album.score = finalScore;
+    }
+
     saveData();
     
     const mainContentElement = document.querySelector('.main-content');
@@ -492,6 +506,35 @@ function closeSettingsModal() {
     document.getElementById('settingsModal').classList.remove('active');
 }
 
+function calcularScore(favorites, likes, dislikes) {
+
+    let pesoFavorite = 10;
+    let pesoLiked = 7;
+    let pesoDisliked = 3;
+    const factor = 6;
+
+    const totalSongs = favorites + likes + dislikes;
+
+    const pStar = favorites / totalSongs;
+    const pLiked = likes / totalSongs;
+    const pDisliked = dislikes / totalSongs;
+
+    pesoFavorite = pesoFavorite + (pStar - pDisliked) * (factor * 4);
+    pesoLiked = pesoLiked + (pStar - pDisliked) * (factor / 2);
+    pesoDisliked = pesoDisliked - (pStar - factor / 2);
+
+    pesoFavorite = Math.min(10, Math.max(0, pesoFavorite));
+    pesoLiked = Math.min(10, Math.max(0, pesoLiked));
+    pesoDisliked = Math.min(10, Math.max(0, pesoDisliked));
+
+    let finalScore = (favorites * pesoFavorite) + (likes * pesoLiked) + (dislikes * pesoDisliked);
+    finalScore = finalScore / totalSongs;
+    finalScore = Number(finalScore.toFixed(1));
+
+    return finalScore;
+
+}
+
 function openEstadisticasModal() {
     if (!currentAlbumId) return;
     
@@ -508,33 +551,11 @@ function openEstadisticasModal() {
         return;
     }
 
-    // modificar pesos dependiento de cantidad de favoritos, likes y dislikes
-
-    let pesoFavorite = 10;
-    let pesoLiked = 7;
-    let pesoDisliked = 3;
-    const factor = 6;
-
-    const pStar = favoriteCount / totalSongs;
-    const pLiked = likedCount / totalSongs;
-    const pDisliked = dislikedCount / totalSongs;
-
     const favoritePercentage = Math.ceil((favoriteCount * 100 / totalSongs) * 10) / 10;
     const likedPercentage = Math.ceil((likedCount * 100 / totalSongs) * 10) / 10;
     const dislikedPercentage = Math.ceil((dislikedCount * 100 / totalSongs) * 10) / 10;
 
-    pesoFavorite = pesoFavorite + (pStar - pDisliked) * (factor * 4);
-    pesoLiked = pesoLiked + (pStar - pDisliked) * (factor / 2);
-    pesoDisliked = pesoDisliked - (pStar - factor / 2);
-
-    pesoFavorite = Math.min(10, Math.max(0, pesoFavorite));
-    pesoLiked = Math.min(10, Math.max(0, pesoLiked));
-    pesoDisliked = Math.min(10, Math.max(0, pesoDisliked));
-
-    // calcular el ranking final
-    let finalScore = (favoriteCount * pesoFavorite) + (likedCount * pesoLiked) + (dislikedCount * pesoDisliked);
-    finalScore = finalScore / totalSongs;
-    finalScore = Number(finalScore.toFixed(1));
+    const finalScore = calcularScore(favoriteCount, likedCount, dislikedCount);
 
     // ponerle color al final score dependiendo si es bueno o malo
     let scoreColor = "#fff";
