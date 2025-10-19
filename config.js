@@ -344,6 +344,7 @@ function showAlbum(albumId, scrollPosition = 0) {
             `).join('')}
         </div>
         <div class="album-actions">
+            <button class="btn-share" onclick="openEstadisticasModal()">Estadísticas</button>
             <button class="btn-share" onclick="openShareModal()">Compartir</button>
             <button class="btn-delete" onclick="openConfirmModal()">Eliminar</button>
         </div>
@@ -491,6 +492,72 @@ function closeSettingsModal() {
     document.getElementById('settingsModal').classList.remove('active');
 }
 
+function openEstadisticasModal() {
+    if (!currentAlbumId) return;
+    
+    const album = albums.find(a => a.id === currentAlbumId);
+    if (!album) return;
+
+    const totalSongs = album.tracks.length;
+    const favoriteCount = album.tracks.filter(t => t.status === 'favorite').length;
+    const likedCount = album.tracks.filter(t => t.status === 'liked').length;
+    const dislikedCount = album.tracks.filter(t => t.status === 'disliked').length;
+
+    if (totalSongs != favoriteCount+likedCount+dislikedCount){
+        alert("Aún hay canciones por calificar antes de ver estadísticas.");
+        return;
+    }
+
+    // modificar pesos dependiento de cantidad de favoritos, likes y dislikes
+
+    let pesoFavorite = 10;
+    let pesoLiked = 7;
+    let pesoDisliked = 3;
+    const factor = 6;
+
+    const pStar = favoriteCount / totalSongs;
+    const pLiked = likedCount / totalSongs;
+    const pDisliked = dislikedCount / totalSongs;
+
+    const favoritePercentage = Math.ceil((favoriteCount * 100 / totalSongs) * 10) / 10;
+    const likedPercentage = Math.ceil((likedCount * 100 / totalSongs) * 10) / 10;
+    const dislikedPercentage = Math.ceil((dislikedCount * 100 / totalSongs) * 10) / 10;
+
+    pesoFavorite = pesoFavorite + (pStar - pDisliked) * (factor * 4);
+    pesoLiked = pesoLiked + (pStar - pDisliked) * (factor / 2);
+    pesoDisliked = pesoDisliked - (pStar - factor / 2);
+
+    pesoFavorite = Math.min(10, Math.max(0, pesoFavorite));
+    pesoLiked = Math.min(10, Math.max(0, pesoLiked));
+    pesoDisliked = Math.min(10, Math.max(0, pesoDisliked));
+
+    // calcular el ranking final
+    let finalScore = (favoriteCount * pesoFavorite) + (likedCount * pesoLiked) + (dislikedCount * pesoDisliked);
+    finalScore = finalScore / totalSongs;
+    finalScore = Number(finalScore.toFixed(1));
+
+    // ponerle color al final score dependiendo si es bueno o malo
+    let scoreColor = "#fff";
+    if (finalScore >= 8.5) scoreColor = "#f1c40f";
+    if (finalScore < 6) scoreColor = "#e74c3c";
+
+    document.getElementById('estadisticasModal').classList.add('active');
+    document.getElementById('estadisticas-finalScore').innerHTML = `
+    <p style="color: #999; font-size: 14px;"><span style="color: ${scoreColor}; font-size: 28px; font-weight: bold;">${finalScore}</span> / 10</p>`;
+
+    document.getElementById('estadisticas-favorites-count').innerText = favoriteCount;
+    document.getElementById('estadisticas-favorites-percentage').innerText = favoritePercentage + "%";
+    document.getElementById('estadisticas-likes-count').innerText = likedCount;
+    document.getElementById('estadisticas-likes-percentage').innerText = likedPercentage + "%";
+    document.getElementById('estadisticas-dislikes-count').innerText = dislikedCount;
+    document.getElementById('estadisticas-dislikes-percentage').innerText = dislikedPercentage + "%";
+
+}
+
+function closeEstadisticasModal() {
+    document.getElementById('estadisticasModal').classList.remove('active');
+}
+
 function exportData() {
     if (albums.length === 0) {
         alert('No hay álbumes para exportar');
@@ -607,5 +674,11 @@ document.getElementById('modal').addEventListener('click', function(e) {
 document.getElementById('settingsModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeSettingsModal();
+    }
+});
+
+document.getElementById('estadisticasModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEstadisticasModal();
     }
 });
