@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light only">
+    <meta name="color-scheme" content="light">
     <title>Album Ranking</title>
     <link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
@@ -64,11 +64,11 @@
                 <form class="search-form" onsubmit="searchAlbum(event)">
                     <div class="form-group">
                         <label class="form-label" for="artistInput">Artista</label>
-                        <input type="text" id="artistInput" class="search-input" placeholder="Ingresa el nombre del artista" required>
+                        <input type="text" id="artistInput" class="search-input" placeholder="Ingresa el nombre del artista" autocomplete="off" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="albumInput">Álbum <span class="label-optional">(opcional)</span></label>
-                        <input type="text" id="albumInput" class="search-input" placeholder="Ingresa el nombre del álbum">
+                        <input type="text" id="albumInput" class="search-input" placeholder="Ingresa el nombre del álbum" autocomplete="off">
                     </div>
                     <button type="submit" class="btn-buscar">Buscar</button>
                 </form>
@@ -114,15 +114,15 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="manualArtist">Artista</label>
-                        <input type="text" id="manualArtist" class="search-input" placeholder="Ingresa el nombre del artista" required>
+                        <input type="text" id="manualArtist" class="search-input" placeholder="Ingresa el nombre del artista" autocomplete="off" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="manualAlbum">Álbum</label>
-                        <input type="text" id="manualAlbum" class="search-input" placeholder="Ingresa el nombre del álbum" required>
+                        <input type="text" id="manualAlbum" class="search-input" placeholder="Ingresa el nombre del álbum" autocomplete="off" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="manualTracks">Canciones</label>
-                        <textarea id="manualTracks" class="search-textarea" placeholder="Ingresa las canciones (una por línea)" required></textarea>
+                        <textarea id="manualTracks" class="search-textarea" placeholder="Ingresa las canciones (una por línea)" autocomplete="off" required></textarea>
                     </div>
                     <button type="submit" class="btn-buscar">Generar</button>
                 </form>
