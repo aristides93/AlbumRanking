@@ -1,6 +1,7 @@
 let albums = [];
 let currentAlbumId = null;
 let selectedColor = 'black';
+let albumFiltrado = false;
 
 function loadData() {
     const savedAlbums = localStorage.getItem('musicLibrary');
@@ -260,7 +261,7 @@ async function selectAlbum(collectionId) {
 function renderAlbumList() {
     const listDiv = document.getElementById('albumList');
     listDiv.innerHTML = albums.map(album => `
-        <div class="album-item ${currentAlbumId === album.id ? 'active' : ''}" onclick="showAlbum(${album.id})">
+        <div class="album-item ${currentAlbumId === album.id ? 'active' : ''}" onclick="albumFiltrado=false; showAlbum(${album.id})">
             <img src="${album.artworkUrl}" alt="${album.collectionName}">
             <div class="album-item-info">
                 <div class="album-item-artist">${album.artistName}</div>
@@ -286,6 +287,12 @@ function showAlbum(albumId, scrollPosition = 0) {
     
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = `
+    <div class="album-actions">
+            <button class="btn-share" id="btn-filtrar-lista" onclick="filtrarLista()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z"></path></svg></button>
+            <button class="btn-share" id="btn-mostrar-lista" onclick="quitarFiltroLista()">Mostrar Todo</button>
+            <button class="btn-share" onclick="openEstadisticasModal()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18H4V10H9V18ZM15 18H10V6H15V18ZM21 18H16V2H21V18ZM22 22H3V20H22V22Z"></path></svg></button>
+            <button class="btn-share" onclick="openShareModal()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5759 17.2714L8.46576 14.484C7.83312 15.112 6.96187 15.5 6 15.5C4.067 15.5 2.5 13.933 2.5 12C2.5 10.067 4.067 8.5 6 8.5C6.96181 8.5 7.83301 8.88796 8.46564 9.51593L13.5759 6.72855C13.5262 6.49354 13.5 6.24983 13.5 6C13.5 4.067 15.067 2.5 17 2.5C18.933 2.5 20.5 4.067 20.5 6C20.5 7.933 18.933 9.5 17 9.5C16.0381 9.5 15.1669 9.11201 14.5343 8.48399L9.42404 11.2713C9.47382 11.5064 9.5 11.7501 9.5 12C9.5 12.2498 9.47383 12.4935 9.42408 12.7285L14.5343 15.516C15.167 14.888 16.0382 14.5 17 14.5C18.933 14.5 20.5 16.067 20.5 18C20.5 19.933 18.933 21.5 17 21.5C15.067 21.5 13.5 19.933 13.5 18C13.5 17.7502 13.5262 17.5064 13.5759 17.2714Z"></path></svg></button>
+        </div>
         <div class="album-header">
             <img src="${album.artworkUrl}" alt="${album.collectionName}" class="album-cover-large">
             <div class="album-info">
@@ -321,9 +328,10 @@ function showAlbum(albumId, scrollPosition = 0) {
                 </div>
             </div>
         </div>
+        
         <div class="track-list">
             ${album.tracks.map(track => `
-                <div class="track-item ${track.status === 'favorite' ? 'favorite' : ''} ${track.status === 'liked' ? 'liked' : ''} ${track.status === 'disliked' ? 'disliked' : ''}">
+                <div class="track-item ${track.status === 'favorite' ? 'favorite' : ''} ${track.status === 'liked' ? 'liked' : ''} ${track.status === 'disliked' ? 'disliked' : ''}" id="${track.id}">
                     <div class="track-number">${track.number}</div>
                     <div class="track-name">${track.name}</div>
                     <div class="track-actions">
@@ -347,8 +355,6 @@ function showAlbum(albumId, scrollPosition = 0) {
             `).join('')}
         </div>
         <div class="album-actions">
-            <button class="btn-share" onclick="openEstadisticasModal()">Estadísticas</button>
-            <button class="btn-share" onclick="openShareModal()">Compartir</button>
             <button class="btn-delete" onclick="openConfirmModal()">Eliminar</button>
         </div>
     `;
@@ -359,6 +365,43 @@ function showAlbum(albumId, scrollPosition = 0) {
             mainContentElement.scrollTop = scrollPosition;
         }, 0);
     }
+}
+
+
+function quitarFiltroLista() {
+    showAlbum(currentAlbumId);
+    albumFiltrado = false;
+}
+
+// oculta las canciones que ya tienen calificacion
+function filtrarLista() {
+    if (!currentAlbumId) return;
+    
+    const album = albums.find(a => a.id === currentAlbumId);
+    if (!album) return;
+
+    // revisar que todas las canciones estén calificadas, si si, return
+    if (album.tracks.filter(t => t.status === null) == 0) {
+        alert("Todas las canciones ya están calificadas");
+        albumFiltrado = false;
+        return;
+    }
+
+    // que cuando cambie de album, albumFilter se cabmie a false
+
+    const totalSongs = album.tracks.length;    
+
+    for(let i=0; i < totalSongs; i++) {
+        if(album.tracks[i].status != null) {
+            document.getElementById(album.tracks[i].id).style.display = "none";
+        }
+    }
+    
+    document.getElementById("btn-mostrar-lista").style.display = "block";
+    document.getElementById("btn-filtrar-lista").style.display = "none";
+
+    albumFiltrado = true;
+
 }
 
 function setTrackStatus(albumId, trackId, status) {
@@ -391,6 +434,11 @@ function setTrackStatus(albumId, trackId, status) {
     const scrollPosition = mainContentElement ? mainContentElement.scrollTop : 0;
     
     showAlbum(albumId, scrollPosition);
+
+
+    if(albumFiltrado) {
+        filtrarLista();
+    }
 }
 
 function openConfirmModal() {

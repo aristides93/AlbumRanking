@@ -203,7 +203,7 @@ header h1 {
 
 .main-content {
     flex: 1;
-    padding: 40px;
+    padding: 16px 40px;
     overflow-y: auto;
     display: flex;
     justify-content: center;
@@ -216,8 +216,8 @@ header h1 {
 
 .album-header {
     display: flex;
+    margin-bottom: 16px;
     gap: 30px;
-    margin-bottom: 40px;
     background: #2a2a2a;
     padding: 30px;
     border-radius: 10px;
@@ -402,16 +402,14 @@ header h1 {
 }
 
 .btn-share {
-    margin-top: 20px;
-    padding: 10px 25px;
+    padding: 6px 25px;
     background: transparent;
     color: #cccccc;
     border: 2px solid #666666;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     transition: all 0.3s;
-    margin-right: 10px;
 }
 
 .btn-share:hover {
@@ -419,12 +417,20 @@ header h1 {
     color: white;
 }
 
+.btn-share svg {
+    width: 20px;
+    height: 20px;
+}
+#btn-mostrar-lista {
+    display: none;
+}
+
 .btn-delete {
-    margin-top: 20px;
+    margin: 20px 0;
     padding: 10px 25px;
     background: transparent;
     color: #e74c3c;
-    border: 2px solid #e74c3c;
+    border: 2px solid #852b21;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
@@ -433,15 +439,17 @@ header h1 {
 
 .btn-delete:hover {
     background: #e74c3c;
+    border: 2px solid #e74c3c;
     color: white;
 }
 
 .album-actions {
     display: flex;
     justify-content: flex-end;
-    padding: 24px 0;
-    /* margin-top: 20px; */
+    gap: 8px;
+    margin-bottom: 12px;
 }
+
 
 .modal {
     display: none;
@@ -1105,7 +1113,7 @@ header h1 {
     }
 
     .main-content {
-        padding: 20px;
+        padding: 0 20px;
     }
 
     .album-header {
@@ -1160,14 +1168,18 @@ header h1 {
     }
 
     .album-actions {
-        flex-direction: column;
+        /* flex-direction: column; */
         gap: 10px;
+        margin-bottom: 0px;
+    }
+    .album-actions .btn-share {
+        flex: 1;
     }
 
     .btn-share,
     .btn-delete {
-        width: 100%;
-        margin: 0;
+        /* width: 100%; */
+        margin: 20px 0;
     }
 
     .modal-content {
