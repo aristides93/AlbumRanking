@@ -266,7 +266,7 @@ function renderAlbumList() {
             <div class="album-item-info">
                 <div class="album-item-artist">${album.artistName}</div>
                 <div class="album-item-name">${album.collectionName}</div>
-                <div class="album-item-score">${album.score} / 10</div>
+                <div class="album-item-score" ${album.score > 0 ? '' : 'style="display: none;"'} >${album.score}<span> / 10</span></div>
             </div>
         </div>
     `).join('');
@@ -284,14 +284,22 @@ function showAlbum(albumId, scrollPosition = 0) {
     const favoriteCount = album.tracks.filter(t => t.status === 'favorite').length;
     const likedCount = album.tracks.filter(t => t.status === 'liked').length;
     const dislikedCount = album.tracks.filter(t => t.status === 'disliked').length;
+    const totalSongs = album.tracks.length;
+    const remainingSongs = totalSongs - favoriteCount - likedCount - dislikedCount;    
+    let albumRanked = false;
+    if(album.score > 0) albumRanked = true;
+
+    const contenidoStatScore = `<div class="stat-item"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6.99999C16.4183 6.99999 20 10.5817 20 15C20 19.4183 16.4183 23 12 23C7.58172 23 4 19.4183 4 15C4 10.5817 7.58172 6.99999 12 6.99999ZM12 8.99999C8.68629 8.99999 6 11.6863 6 15C6 18.3137 8.68629 21 12 21C15.3137 21 18 18.3137 18 15C18 11.6863 15.3137 8.99999 12 8.99999ZM12 10.5L13.3225 13.1797L16.2798 13.6094L14.1399 15.6953L14.645 18.6406L12 17.25L9.35497 18.6406L9.86012 15.6953L7.72025 13.6094L10.6775 13.1797L12 10.5ZM18 1.99999V4.99999L16.6366 6.13755C15.5305 5.5577 14.3025 5.17884 13.0011 5.04948L13 1.99899L18 1.99999ZM11 1.99899L10.9997 5.04939C9.6984 5.17863 8.47046 5.55735 7.36441 6.13703L6 4.99999V1.99999L11 1.99899Z"></path></svg></span><span>${album.score} / 10</span></div>`;
+
+    const  contenidoStatRemainingSongs = `<div class="stat-item"><span class="stat-icon"><svg fill="currentColor" viewBox="0 0 256 256"><path d="M198.24,62.63l15.68-17.25a8,8,0,0,0-11.84-10.76L186.4,51.86A95.95,95.95,0,0,0,57.76,193.37L42.08,210.62a8,8,0,1,0,11.84,10.76L69.6,204.14A95.95,95.95,0,0,0,198.24,62.63ZM48,128A80,80,0,0,1,175.6,63.75l-107,117.73A79.63,79.63,0,0,1,48,128Zm80,80a79.55,79.55,0,0,1-47.6-15.75l107-117.73A79.95,79.95,0,0,1,128,208Z"></path></svg></span><span>${remainingSongs}</span></div>`;
     
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = `
     <div class="album-actions">
-            <button class="btn-share" id="btn-filtrar-lista" onclick="filtrarLista()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z"></path></svg></button>
+            <button class="btn-share" id="btn-filtrar-lista" ${albumRanked ? 'style="display: none;' : 'onclick="filtrarLista()"'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z"></path></svg></button>
             <button class="btn-share" id="btn-mostrar-lista" onclick="quitarFiltroLista()">Mostrar Todo</button>
-            <button class="btn-share" onclick="openEstadisticasModal()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18H4V10H9V18ZM15 18H10V6H15V18ZM21 18H16V2H21V18ZM22 22H3V20H22V22Z"></path></svg></button>
-            <button class="btn-share" onclick="openShareModal()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5759 17.2714L8.46576 14.484C7.83312 15.112 6.96187 15.5 6 15.5C4.067 15.5 2.5 13.933 2.5 12C2.5 10.067 4.067 8.5 6 8.5C6.96181 8.5 7.83301 8.88796 8.46564 9.51593L13.5759 6.72855C13.5262 6.49354 13.5 6.24983 13.5 6C13.5 4.067 15.067 2.5 17 2.5C18.933 2.5 20.5 4.067 20.5 6C20.5 7.933 18.933 9.5 17 9.5C16.0381 9.5 15.1669 9.11201 14.5343 8.48399L9.42404 11.2713C9.47382 11.5064 9.5 11.7501 9.5 12C9.5 12.2498 9.47383 12.4935 9.42408 12.7285L14.5343 15.516C15.167 14.888 16.0382 14.5 17 14.5C18.933 14.5 20.5 16.067 20.5 18C20.5 19.933 18.933 21.5 17 21.5C15.067 21.5 13.5 19.933 13.5 18C13.5 17.7502 13.5262 17.5064 13.5759 17.2714Z"></path></svg></button>
+            <button class="btn-share" ${albumRanked ? 'onclick="openEstadisticasModal()"' : 'style="display: none;'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18H4V10H9V18ZM15 18H10V6H15V18ZM21 18H16V2H21V18ZM22 22H3V20H22V22Z"></path></svg></button>
+            <button class="btn-share" ${albumRanked ? 'onclick="openShareModal()"' : 'style="display: none;'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5759 17.2714L8.46576 14.484C7.83312 15.112 6.96187 15.5 6 15.5C4.067 15.5 2.5 13.933 2.5 12C2.5 10.067 4.067 8.5 6 8.5C6.96181 8.5 7.83301 8.88796 8.46564 9.51593L13.5759 6.72855C13.5262 6.49354 13.5 6.24983 13.5 6C13.5 4.067 15.067 2.5 17 2.5C18.933 2.5 20.5 4.067 20.5 6C20.5 7.933 18.933 9.5 17 9.5C16.0381 9.5 15.1669 9.11201 14.5343 8.48399L9.42404 11.2713C9.47382 11.5064 9.5 11.7501 9.5 12C9.5 12.2498 9.47383 12.4935 9.42408 12.7285L14.5343 15.516C15.167 14.888 16.0382 14.5 17 14.5C18.933 14.5 20.5 16.067 20.5 18C20.5 19.933 18.933 21.5 17 21.5C15.067 21.5 13.5 19.933 13.5 18C13.5 17.7502 13.5262 17.5064 13.5759 17.2714Z"></path></svg></button>
         </div>
         <div class="album-header">
             <img src="${album.artworkUrl}" alt="${album.collectionName}" class="album-cover-large">
@@ -301,12 +309,7 @@ function showAlbum(albumId, scrollPosition = 0) {
                     <div class="album-name">${album.collectionName}</div>
                 </div>
                 <div class="album-stats">
-                <div class="stat-item">
-                        <span class="stat-icon">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6.99999C16.4183 6.99999 20 10.5817 20 15C20 19.4183 16.4183 23 12 23C7.58172 23 4 19.4183 4 15C4 10.5817 7.58172 6.99999 12 6.99999ZM12 8.99999C8.68629 8.99999 6 11.6863 6 15C6 18.3137 8.68629 21 12 21C15.3137 21 18 18.3137 18 15C18 11.6863 15.3137 8.99999 12 8.99999ZM12 10.5L13.3225 13.1797L16.2798 13.6094L14.1399 15.6953L14.645 18.6406L12 17.25L9.35497 18.6406L9.86012 15.6953L7.72025 13.6094L10.6775 13.1797L12 10.5ZM18 1.99999V4.99999L16.6366 6.13755C15.5305 5.5577 14.3025 5.17884 13.0011 5.04948L13 1.99899L18 1.99999ZM11 1.99899L10.9997 5.04939C9.6984 5.17863 8.47046 5.55735 7.36441 6.13703L6 4.99999V1.99999L11 1.99899Z"></path></svg>
-                        </span>
-                        <span>${album.score} / 10</span>
-                    </div>
+                ${albumRanked ? contenidoStatScore : contenidoStatRemainingSongs }
                     <div class="stat-item">
                         <span class="stat-icon">
                             <svg viewBox="0 0 640 512" fill="currentColor">
@@ -381,7 +384,6 @@ function filtrarLista() {
 
     // revisar que todas las canciones estén calificadas, si si, return
     if (album.tracks.filter(t => t.status === null) == 0) {
-        alert("Todas las canciones ya están calificadas");
         albumFiltrado = false;
         return;
     }
@@ -425,6 +427,8 @@ function setTrackStatus(albumId, trackId, status) {
     if (totalSongs == favoriteCount+likedCount+dislikedCount) {
         const finalScore = calcularScore(favoriteCount, likedCount, dislikedCount);
         album.score = finalScore;
+    } else {
+        album.score = 0;
     }
 
     saveData();
