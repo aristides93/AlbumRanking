@@ -387,6 +387,7 @@ header h1 {
     background: rgba(241, 196, 15, 0.24);
     border-color: transparent;
     color: #f1c40f;
+    padding-top: 2px;
 }
 
 .track-btn.active.thumbs-up {
@@ -855,31 +856,41 @@ header h1 {
 }
 
 .share-body {
-    color: #ffffff;
+    color: #fff;
     line-height: 1.6;
+}
+
+.share-header-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .share-artist {
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 10px;
 }
 
 .share-album {
     font-size: 18px;
-    color: #999999;
-    margin-bottom: 20px;
+    color: #999;
+}
+
+.share-score {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
 }
 
 .share-section {
-    margin: 20px 0;
+    margin: 8px 0;
 }
 
 .share-divider {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 15px 0;
+    margin: 2px 0;
     color: #999999;
     font-weight: 600;
 }
@@ -893,7 +904,7 @@ header h1 {
 }
 
 .share-track {
-    padding: 8px 0;
+    padding: 4px 0;
     color: #cccccc;
 }
 
