@@ -165,7 +165,14 @@
             
             <div class="settings-section">
                 <h3>Filtros</h3>
-                <p style="color: #999999; font-size: 14px;">Próximamente...</p>
+                <p class="filtros-subtitle">Status</p>
+                <div class="filtros-status-container" id="filtros-status-container">
+                    <div class="filtros-status-item" id="filtro-status-todos" onclick="aplicarFiltroStatus(this)">Todos</div>
+                    <div class="filtros-status-item" id="filtro-status-pendientes" onclick="aplicarFiltroStatus(this)">Pendientes</div>
+                    <div class="filtros-status-item" id="filtro-status-completados" onclick="aplicarFiltroStatus(this)">Completados</div>
+                </div>
+                <p style="margin-top: 20px" class="filtros-subtitle">Artista</p>
+                <p style="color: #999">Próximamente ...</p>
             </div>
             
             <div class="settings-section">

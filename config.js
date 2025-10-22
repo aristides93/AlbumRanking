@@ -2,10 +2,19 @@ let albums = [];
 let currentAlbumId = null;
 let selectedColor = 'black';
 let albumFiltrado = false;
+let filtroStatus = "";
 
 function loadData() {
     const savedAlbums = localStorage.getItem('musicLibrary');
     const savedCurrentAlbum = localStorage.getItem('currentAlbumId');
+
+    const filtroStatusContenido = localStorage.getItem('filtroStatus');
+
+    if (filtroStatusContenido === null) {
+        filtroStatus = "todos";
+    } else {
+        filtroStatus = filtroStatusContenido;
+    }
     
     if (savedAlbums) {
         albums = JSON.parse(savedAlbums);
@@ -23,6 +32,8 @@ function loadData() {
 function saveData() {
     localStorage.setItem('musicLibrary', JSON.stringify(albums));
     localStorage.setItem('currentAlbumId', currentAlbumId);
+    localStorage.setItem('filtroStatus', filtroStatus);
+
 }
 
 window.addEventListener('DOMContentLoaded', loadData);
@@ -257,10 +268,28 @@ async function selectAlbum(collectionId) {
         alert('Error al cargar el álbum. Intenta de nuevo.');
     }
 }
+function quitarFiltroStatus(){
+    filtroStatus = "todos";
+    localStorage.setItem('filtroStatus', filtroStatus);
+    renderAlbumList();
+}
 
 function renderAlbumList() {
     const listDiv = document.getElementById('albumList');
-    listDiv.innerHTML = albums.map(album => `
+    let indicadorFiltros = '';
+
+    if(filtroStatus === "pendientes") indicadorFiltros = '<div class="indicadoresFiltro" onclick="quitarFiltroStatus()"><span>Filtro: Pendienets</span><span>&times;</span></div>';
+    if(filtroStatus === "completados") indicadorFiltros = '<div class="indicadoresFiltro" onclick="quitarFiltroStatus()"><span>Completados</span><span>&times;</span></div>';
+
+    listDiv.innerHTML = indicadorFiltros + albums.filter(album => {
+        if (filtroStatus === "pendientes") {
+            return album.score <= 0;
+        } else if (filtroStatus === "completados") {
+            return album.score > 0;
+        } else { // filtroStatus === "todos"
+            return true;
+        }
+    }).map(album => `
         <div class="album-item ${currentAlbumId === album.id ? 'active' : ''}" onclick="albumFiltrado=false; showAlbum(${album.id})">
             <img src="${album.artworkUrl}" alt="${album.collectionName}">
             <div class="album-item-info">
@@ -270,6 +299,18 @@ function renderAlbumList() {
             </div>
         </div>
     `).join('');
+
+    // ---- CODIGO ANTES DE MODIFICACIONES ----
+    // listDiv.innerHTML = albums.map(album => `
+    //     <div class="album-item ${currentAlbumId === album.id ? 'active' : ''}" onclick="albumFiltrado=false; showAlbum(${album.id})">
+    //         <img src="${album.artworkUrl}" alt="${album.collectionName}">
+    //         <div class="album-item-info">
+    //             <div class="album-item-artist">${album.artistName}</div>
+    //             <div class="album-item-name">${album.collectionName}</div>
+    //             <div class="album-item-score" ${album.score > 0 ? '' : 'style="display: none;"'} >${album.score}<span> / 10</span></div>
+    //         </div>
+    //     </div>
+    // `).join('');
 }
 
 function showAlbum(albumId, scrollPosition = 0) {
@@ -296,8 +337,8 @@ function showAlbum(albumId, scrollPosition = 0) {
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = `
     <div class="album-actions">
-            <button class="btn-share" id="btn-filtrar-lista" ${albumRanked ? 'style="display: none;' : 'onclick="filtrarLista()"'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z"></path></svg></button>
-            <button class="btn-share" id="btn-mostrar-lista" onclick="quitarFiltroLista()">Mostrar Todo</button>
+            <button class="btn-share" id="btn-filtrar-lista" ${albumRanked ? 'style="display: none;' : 'onclick="filtrarLista()"'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z"></path></svg>Pendientes</button>
+            <button class="btn-share" id="btn-mostrar-lista" onclick="quitarFiltroLista()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4C14.7486 4 17.1749 5.38626 18.6156 7.5H16V9.5H22V3.5H20V5.99936C18.1762 3.57166 15.2724 2 12 2C6.47715 2 2 6.47715 2 12H4C4 7.58172 7.58172 4 12 4ZM20 12C20 16.4183 16.4183 20 12 20C9.25144 20 6.82508 18.6137 5.38443 16.5H8V14.5H2V20.5H4V18.0006C5.82381 20.4283 8.72764 22 12 22C17.5228 22 22 17.5228 22 12H20Z"></path></svg>Mostrar Todo</button>
             <button class="btn-share" ${albumRanked ? 'onclick="openEstadisticasModal()"' : 'style="display: none;'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18H4V10H9V18ZM15 18H10V6H15V18ZM21 18H16V2H21V18ZM22 22H3V20H22V22Z"></path></svg></button>
             <button class="btn-share" ${albumRanked ? 'onclick="openShareModal()"' : 'style="display: none;'}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5759 17.2714L8.46576 14.484C7.83312 15.112 6.96187 15.5 6 15.5C4.067 15.5 2.5 13.933 2.5 12C2.5 10.067 4.067 8.5 6 8.5C6.96181 8.5 7.83301 8.88796 8.46564 9.51593L13.5759 6.72855C13.5262 6.49354 13.5 6.24983 13.5 6C13.5 4.067 15.067 2.5 17 2.5C18.933 2.5 20.5 4.067 20.5 6C20.5 7.933 18.933 9.5 17 9.5C16.0381 9.5 15.1669 9.11201 14.5343 8.48399L9.42404 11.2713C9.47382 11.5064 9.5 11.7501 9.5 12C9.5 12.2498 9.47383 12.4935 9.42408 12.7285L14.5343 15.516C15.167 14.888 16.0382 14.5 17 14.5C18.933 14.5 20.5 16.067 20.5 18C20.5 19.933 18.933 21.5 17 21.5C15.067 21.5 13.5 19.933 13.5 18C13.5 17.7502 13.5262 17.5064 13.5759 17.2714Z"></path></svg></button>
         </div>
@@ -398,7 +439,7 @@ function filtrarLista() {
         }
     }
     
-    document.getElementById("btn-mostrar-lista").style.display = "block";
+    document.getElementById("btn-mostrar-lista").style.display = "flex";
     document.getElementById("btn-filtrar-lista").style.display = "none";
 
     albumFiltrado = true;
@@ -554,10 +595,35 @@ function closeShareModal() {
 function openSettingsModal() {
     document.getElementById('settingsModal').classList.add('active');
     closeSidebar();
+    uiFiltroStatus();
 }
 
 function closeSettingsModal() {
     document.getElementById('settingsModal').classList.remove('active');
+    renderAlbumList();
+    localStorage.setItem('filtroStatus', filtroStatus);
+}
+
+function uiFiltroStatus(){
+    document.querySelectorAll('#filtros-status-container *').forEach(el => {
+        el.classList.remove('active');
+    });
+    document.getElementById(`filtro-status-${filtroStatus}`).classList.add('active');
+}
+
+function aplicarFiltroStatus(status) {
+    switch (status.id) {
+        case "filtro-status-todos":
+            filtroStatus = "todos";
+            break;
+        case "filtro-status-pendientes":
+            filtroStatus = "pendientes";
+            break;
+        case "filtro-status-completados":
+            filtroStatus = "completados";
+            break;        
+    };
+    uiFiltroStatus();
 }
 
 function calcularScore(favorites, likes, dislikes) {
