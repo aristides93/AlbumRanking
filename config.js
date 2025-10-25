@@ -629,27 +629,34 @@ function aplicarFiltroStatus(status) {
 function calcularScore(favorites, likes, dislikes) {
 
     let pesoFavorite = 10;
-    let pesoLiked = 7;
-    let pesoDisliked = 3;
-    const factor = 6;
+    let pesoLiked = 8;
+    let pesoDisliked = 5;
 
     const totalSongs = favorites + likes + dislikes;
+    const topScore = totalSongs * pesoFavorite;
 
-    const pStar = favorites / totalSongs;
-    const pLiked = likes / totalSongs;
-    const pDisliked = dislikes / totalSongs;
+    let percentFavorite = (favorites / totalSongs) * 100;
+    let percentLiked = (likes / totalSongs) * 100;
+    let percentDisliked = (dislikes / totalSongs) * 100;
 
-    pesoFavorite = pesoFavorite + (pStar - pDisliked) * (factor * 4);
-    pesoLiked = pesoLiked + (pStar - pDisliked) * (factor / 2);
-    pesoDisliked = pesoDisliked - (pStar - factor / 2);
+    if (percentFavorite >= 40) pesoFavorite += 2;
+    if (percentDisliked >= 40) pesoDisliked -= 2;
+    if (percentDisliked >= 55) pesoDisliked -= 1;
+    if (percentDisliked <= 15) pesoDisliked ++;
 
-    pesoFavorite = Math.min(10, Math.max(0, pesoFavorite));
-    pesoLiked = Math.min(10, Math.max(0, pesoLiked));
-    pesoDisliked = Math.min(10, Math.max(0, pesoDisliked));
 
-    let finalScore = (favorites * pesoFavorite) + (likes * pesoLiked) + (dislikes * pesoDisliked);
-    finalScore = finalScore / totalSongs;
-    finalScore = Number(finalScore.toFixed(1));
+    pesoFavorite = pesoFavorite * favorites;
+    pesoLiked = pesoLiked * likes;
+    pesoDisliked = pesoDisliked * dislikes;
+
+    let pesoTotal = pesoFavorite + pesoLiked + pesoDisliked;
+    
+    let finalScore = pesoTotal * 10 / topScore;
+    finalScore = Math.min(finalScore, 10);
+    if (dislikes >= 2 && dislikes != 0 && finalScore >= 9.8) finalScore -= 0.2;
+    if (dislikes >= totalSongs-1) finalScore -= 2.5;
+    finalScore = Math.max(finalScore, 0.1);
+    finalScore = Math.round(finalScore * 10) / 10;
 
     return finalScore;
 

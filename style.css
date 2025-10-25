@@ -1,3 +1,28 @@
+:root {
+    /* ----- VERDE #27ae60 ----- */
+    --color-accent: 39, 174, 96;
+
+    /* ----- AZUL #4582F5 ----- */
+    /* --color-accent: 69, 130, 245; */
+
+    /* ----- ROJO #E64949 ----- */
+    /* --color-accent: 230, 73, 73; */
+
+    /* ----- AMARILLO #DBA000 ----- */
+    /* --color-accent: 219, 160, 0; */
+
+    /* ----- MORADO #BA45F5 ----- */
+    /* --color-accent: 186, 69, 245; */
+
+    /* ----- NARANJA #E06924 ----- */
+    /* --color-accent: 224, 105, 36; */
+
+    /* ----- GRIS #8F8E94 ----- */
+    /* --color-accent: 143, 142, 148; */
+    
+    
+}
+
 html { color-scheme: light; }
 * {
     margin: 0;
@@ -65,7 +90,7 @@ header h1 {
 }
 
 .btn-nuevo {
-    background: #27ae60;
+    background: rgb(var(--color-accent));
     color: white;
     border: none;
     padding: 10px 20px;
@@ -76,7 +101,7 @@ header h1 {
 }
 
 .btn-nuevo:hover {
-    background: #229954;
+    background: rgba(var(--color-accent), 0.88);
 }
 
 .container {
@@ -159,8 +184,8 @@ header h1 {
 }
 
 .album-item.active {
-    background: #1e3d2e;
-    border-left: 4px solid #27ae60;
+    background: rgba(var(--color-accent), 0.2);
+    border-left: 4px solid rgb(var(--color-accent));
 }
 
 .album-item img {
@@ -195,7 +220,6 @@ header h1 {
 .album-item-score {
     font-size: 13px;
     font-weight: 600;
-    /* color: #229954; */
     color: #fff;
     white-space: nowrap;
     overflow: hidden;
@@ -274,10 +298,6 @@ header h1 {
     gap: 8px;
     font-size: 16px;
     color: #999999;
-}
-
-#stat-remainingSongs {
-    font-size: 12px;
 }
 
 .stat-icon {
@@ -489,9 +509,9 @@ header h1 {
 }
 
 .filtros-status-item.active {
-    border-color: rgba(39, 174, 96, 0.64);
-    color: #27ae60;
-    background-color: rgba(39, 174, 96, 0.12);
+    border-color: rgba(var(--color-accent), 0.64);
+    color: rgb(var(--color-accent));
+    background-color: rgba(var(--color-accent), 0.12);
     font-weight: 700;
 }
 
@@ -499,9 +519,9 @@ header h1 {
     padding: 12px 16px;
     font-size: 13px;
     font-weight: 700;
-    color: #27ae60;
-    background-color: rgba(39, 174, 96, 0.12);
-    border: 2px solid rgba(39, 174, 96, 0.12);
+    color: rgb(var(--color-accent));;
+    background-color: rgba(var(--color-accent), 0.12);
+    border: 2px solid rgba(var(--color-accent), 0.12);
     border-radius: 6px;
     cursor: pointer;
     display: flex;
@@ -578,8 +598,8 @@ header h1 {
 }
 
 .tab.active {
-    color: #27ae60;
-    border-bottom-color: #27ae60;
+    color: rgb(var(--color-accent));
+    border-bottom-color: rgb(var(--color-accent));
 }
 
 .tab-content {
@@ -696,7 +716,7 @@ header h1 {
 
 .search-input:focus {
     outline: none;
-    border-color: #27ae60;
+    border-color: rgb(var(--color-accent));
 }
 
 .search-textarea {
@@ -713,11 +733,11 @@ header h1 {
 
 .search-textarea:focus {
     outline: none;
-    border-color: #27ae60;
+    border-color: rgb(var(--color-accent));
 }
 
 .btn-buscar {
-    background: #27ae60;
+    background: rgb(var(--color-accent));
     color: white;
     border: none;
     padding: 12px 30px;
@@ -727,7 +747,7 @@ header h1 {
 }
 
 .btn-buscar:hover {
-    background: #229954;
+    background: rgba(var(--color-accent), 0.88);
 }
 
 .search-results {
@@ -905,7 +925,7 @@ header h1 {
 }
 
 .btn-copy {
-    background: #27ae60;
+    background: rgb(var(--color-accent));
     color: white;
     border: none;
     padding: 8px 20px;
@@ -916,7 +936,7 @@ header h1 {
 }
 
 .btn-copy:hover {
-    background: #229954;
+    background: rgba(var(--color-accent), 0.88);
 }
 
 .share-body {
